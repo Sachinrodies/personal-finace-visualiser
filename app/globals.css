@@ -120,3 +120,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .pencil-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #6a5acd 50%, #8a2be2 75%, #9370db 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+}
+

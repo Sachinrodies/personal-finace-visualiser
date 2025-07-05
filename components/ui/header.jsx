@@ -10,7 +10,7 @@ const Header = () => {
             <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
 
                 <Link href="/">
-                    <Image src="/logo-2.png"
+                    <Image src="/logo.png"
                         alt="budgetwiseLogo"
                         width={100} // can adjust if needed
                         height={100} // not too tall to affect nav
