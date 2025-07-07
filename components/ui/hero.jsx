@@ -1,9 +1,80 @@
 'use client'
 
 import Link from 'next/link'
-import React from 'react'
+import React, { useRef } from 'react'
 import { Button } from './button'
+import { RainbowButton } from './rainbow-button'
 import Image from 'next/image'
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
+
+const ROTATION_RANGE = 32.5;
+const HALF_ROTATION_RANGE = 32.5 / 2;
+
+const TiltBanner = () => {
+  const ref = useRef(null);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const xSpring = useSpring(x);
+  const ySpring = useSpring(y);
+
+  const transform = useMotionTemplate`rotateX(${xSpring}deg) rotateY(${ySpring}deg)`;
+
+  const handleMouseMove = (e) => {
+    if (!ref.current) return [0, 0];
+
+    const rect = ref.current.getBoundingClientRect();
+
+    const width = rect.width;
+    const height = rect.height;
+
+    const mouseX = (e.clientX - rect.left) * ROTATION_RANGE;
+    const mouseY = (e.clientY - rect.top) * ROTATION_RANGE;
+
+    const rX = (mouseY / height - HALF_ROTATION_RANGE) * -1;
+    const rY = mouseX / width - HALF_ROTATION_RANGE;
+
+    x.set(rX);
+    y.set(rY);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transformStyle: "preserve-3d",
+        transform,
+      }}
+      className="relative w-fit mx-auto group"
+    >
+      <div className="rounded-xl bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 p-[3px] shadow-lg animate-gradient-x">
+        <div className="rounded-xl overflow-hidden bg-white">
+          <Image
+            src="/banner.png"
+            alt="Dashboard Preview"
+            width={1200}
+            height={600}
+            className="rounded-xl"
+            priority
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 const HeroSection = () => {
   return (
@@ -23,31 +94,15 @@ const HeroSection = () => {
 
         <div className="flex justify-center space-x-4 mb-12">
           <Link href="/dashboard">
-            <Button size="lg" className="px-8">
-              Get Started
-            </Button>
+            <RainbowButton>Get Started</RainbowButton>
           </Link>
           <Link href="/demo">
-            <Button size="lg" variant="outline" className="px-8">
-              Watch Demo
-            </Button>
+            <RainbowButton variant="outline">Watch Demo</RainbowButton>
           </Link>
         </div>
 
-        {/* 🔥 Hover Border Gradient Wrapper */}
-        <div className="relative w-fit mx-auto group">
-          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 p-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
-          <div className="relative z-10 rounded-xl overflow-hidden">
-            <Image
-              src="/banner.png"
-              alt="Dashboard Preview"
-              width={1280}
-              height={720}
-              className="rounded-xl border border-gray-200"
-              priority
-            />
-          </div>
-        </div>
+        {/* 🔥 Enhanced Border Gradient Wrapper with Tilt Effect */}
+        <TiltBanner />
       </div>
     </div>
   )
